@@ -52,3 +52,25 @@ resource "aws_internet_gateway" "default" {
   # only works if both VPCs are owned by the same account.
   auto_accept = true
 }
+  #Routing between VPCs
+  resource "aws_route" "main2secondary" {
+  # ID of VPC 1 main route table.
+  route_table_id = "${aws_vpc.main.main_route_table_id}"
+
+  # CIDR block / IP range for VPC 2.
+  destination_cidr_block = "${aws_vpc.secondary.cidr_block}"
+
+  # ID of VPC peering connection.
+  vpc_peering_connection_id = "${aws_vpc_peering_connection.primary2secondary.id}"
+}
+  
+  resource "aws_route" "secondary2main" {
+  # ID of VPC 2 main route table.
+  route_table_id = "${aws_vpc.secondary.main_route_table_id}"
+
+  # CIDR block / IP range for VPC 2.
+  destination_cidr_block = "${aws_vpc.main.cidr_block}"
+
+  # ID of VPC peering connection.
+  vpc_peering_connection_id = "${aws_vpc_peering_connection.primary2secondary.id}"
+}
