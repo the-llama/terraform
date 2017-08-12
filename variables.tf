@@ -1,6 +1,15 @@
 #Variables
-variable "AKIAJEEKR7MVGZRGPR2A" {}
-variable "qXvEDFtH4VF1GthU2bgWB89+uYL2nDZh0P5xIHBh" {}
-variable "region" {
-  default = "us-east-2"
+variable "aws_access_key" {}
+variable "aws_secret_key" {}
+
+variable "aws_region" {
+default = "us-east-2"
 }
+
+variable "amis" {
+    description = "AMIs by region"
+    default = {
+        us-east-2 = "ami-f1810f86" # ubuntu 14.04 LTS
+    }
+}
+
