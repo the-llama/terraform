@@ -34,3 +34,21 @@ resource "aws_vpc" "secondary" {
 
 resource "aws_internet_gateway" "default" {
     vpc_id = "${aws_vpc.default.id}"
+
+  #VPC networking
+  resource "aws_vpc_peering_connection" "primary2secondary" {
+  # Main VPC ID.
+  vpc_id = "${aws_vpc.main.id}"
+
+  # AWS Account ID. This can be dynamically queried using the
+  # aws_caller_identity data resource.
+  # https://www.terraform.io/docs/providers/aws/d/caller_identity.html
+  peer_owner_id = "${data.aws_caller_identity.current.account_id}"
+
+  # Secondary VPC ID.
+  peer_vpc_id = "${aws_vpc.secondary.id}"
+
+  # Flags that the peering connection should be automatically confirmed. This
+  # only works if both VPCs are owned by the same account.
+  auto_accept = true
+}
