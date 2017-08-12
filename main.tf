@@ -5,6 +5,14 @@ provider "aws" {
   region     = "${var.region}"
 }
 
+data "terraform_remote_state" "network" {
+  backend = "s3"
+  config {
+    bucket = "fuji-tf-state"
+    key    = "${var.secret_key}"
+    region = "us-east-2"
+  }
+}
 resource "aws_vpc" "main" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "dedicated"
