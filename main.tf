@@ -13,6 +13,7 @@ data "terraform_remote_state" "network" {
     region = "us-east-2"
   }
 }
+#First VPC
 resource "aws_vpc" "main" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "dedicated"
@@ -21,7 +22,7 @@ resource "aws_vpc" "main" {
     Name = "main"
   }
 }
-
+#Secondary VPC
 resource "aws_vpc" "secondary" {
   cidr_block       = "172.16.0.0/16"
   instance_tenancy = "dedicated"
@@ -31,3 +32,5 @@ resource "aws_vpc" "secondary" {
   }
 }
 
+resource "aws_internet_gateway" "default" {
+    vpc_id = "${aws_vpc.default.id}"
