@@ -14,47 +14,64 @@ data "terraform_remote_state" "network" {
   }
 }
 #First VPC
-resource "aws_vpc" "main" {
+resource "aws_vpc" "primary" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "dedicated"
 
   tags {
-    Name = "main"
+    Name = "primary"
   }
 }
 #Secondary VPC
 resource "aws_vpc" "secondary" {
   cidr_block       = "172.16.0.0/16"
   instance_tenancy = "dedicated"
-
   tags {
     Name = "secondary"
   }
 }
 
-resource "aws_security_group" "http_rules"
-name = "http_rules"
-description = "Allow inbound HTTP traffic"
+resource "aws_security_group" "http_rules" {
+	name = "http_rules"
+	description = "Allow inbound HTTP traffic"
+	ingress {
+		from_port = 80
+		to_port = 80
+		protocol = "tcp"
+		}
 
-ingress {
-from_port = 80
-to_port = 80
-protocol = tcp
-
+	ingress {
+		from_port = 443
+		to_port = 443 
+		protocol = "tcp"
+		}
+	vpc_id = "${aws_vpc.primary.id}"
+	vpc_id = "${aws_vpc.secondary.id}"
 }
-ingress {
-from_port = 443
-to_port = 443 
-protocol + tcp
-}
 
-resource "aws_internet_gateway" "default" {
+resource "aws_internet_gateway" "nat-gateway" {
     vpc_id = "${aws_vpc.default.id}"
 
+	resource "aws_security_group" "nat" {
+	name = "nat"
+	description = "Allow services from the private subnet through NAT"
+
+	ingress {
+		from_port = 0
+		to_port = 65535
+		protocol = "tcp"
+		cidr_blocks = ["${aws_subnet.us-east-2b-private.cidr_block}"]
+	}
+
+	vpc_id = "${aws_vpc.primary.id}"
+	vpc_id = "${aws_vpc.secondary.id}"
+}
+	
+	
   #VPC networking
   resource "aws_vpc_peering_connection" "primary2secondary" {
-  # Main VPC ID.
-  vpc_id = "${aws_vpc.main.id}"
+  # Primary VPC ID.
+  vpc_id = "${aws_vpc.primary.id}"
 
   # AWS Account ID. This can be dynamically queried using the
   # aws_caller_identity data resource.
@@ -69,9 +86,9 @@ resource "aws_internet_gateway" "default" {
   auto_accept = true
 }
   #Routing between VPCs
-  resource "aws_route" "main2secondary" {
+  resource "aws_route" "primary2secondary" {
   # ID of VPC 1 main route table.
-  route_table_id = "${aws_vpc.main.main_route_table_id}"
+  route_table_id = "${aws_vpc.primary.main_route_table_id}"
 
   # CIDR block / IP range for VPC 2.
   destination_cidr_block = "${aws_vpc.secondary.cidr_block}"
@@ -80,13 +97,14 @@ resource "aws_internet_gateway" "default" {
   vpc_peering_connection_id = "${aws_vpc_peering_connection.primary2secondary.id}"
 }
   
-  resource "aws_route" "secondary2main" {
+  resource "aws_route" "secondary2primary" {
   # ID of VPC 2 main route table.
   route_table_id = "${aws_vpc.secondary.main_route_table_id}"
 
   # CIDR block / IP range for VPC 2.
-  destination_cidr_block = "${aws_vpc.main.cidr_block}"
+  destination_cidr_block = "${aws_vpc.secondary.cidr_block}"
 
   # ID of VPC peering connection.
   vpc_peering_connection_id = "${aws_vpc_peering_connection.primary2secondary.id}"
+}
 }
