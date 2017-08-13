@@ -1,17 +1,17 @@
 #main.tf
 	provider "aws" {
+	profile = "terraform-user"
 	region = "us-west-2"
-	shared_credentials_file = "~//.aws//credentials"
-	#profile = default
+	shared_credentials_file = "C://Users//Mark//.aws//credentials"
 	
 }
 
-data "terraform_remote_state" "network" {
-  backend = "s3"
-  config {
-    bucket = "fuji-tf-state"
-    #key    = "${var.aws_secret_key}"
-    region = "us-west-2"
+terraform {
+	backend "s3" {
+	bucket = "fuji-tf-state"
+	profile = "terraform-user"
+	region = "us-west-2"
+	shared_credentials_file = "C://Users//Mark//.aws//credentials"
   }
 }
 #First VPC
