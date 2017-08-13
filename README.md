@@ -10,3 +10,5 @@ Would have liked to have located the VPC in separate cloud locations, but I wasn
 2. configure infrastructure inside each cloud
 5. (Three, sir!) Find how to geo-locate to separate cloud
 4. See if this actually works....
+
+VPC intra-routing code from https://www.nicksantamaria.net/post/how-to-peer-vpcs-with-terraform/

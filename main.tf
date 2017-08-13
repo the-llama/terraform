@@ -32,6 +32,22 @@ resource "aws_vpc" "secondary" {
   }
 }
 
+resource "aws_security_group" "http_rules"
+name = "http_rules"
+description = "Allow inbound HTTP traffic"
+
+ingress {
+from_port = 80
+to_port = 80
+protocol = tcp
+
+}
+ingress {
+from_port = 443
+to_port = 443 
+protocol + tcp
+}
+
 resource "aws_internet_gateway" "default" {
     vpc_id = "${aws_vpc.default.id}"
 
