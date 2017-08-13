@@ -1,15 +1,15 @@
 #main.tf
 provider "aws" {
-  access_key = "${var.access_key}"
-  secret_key = "${var.secret_key}"
-  region     = "${var.region}"
+  aws_access_key = "${var.aws_access_key}"
+  aws_secret_key = "${var.aws_secret_key}"
+  aws_region     = "${var.aws_region}"
 }
 
 data "terraform_remote_state" "network" {
   backend = "s3"
   config {
     bucket = "fuji-tf-state"
-    key    = "${var.secret_key}"
+    key    = "${var.aws_secret_key}"
     region = "us-east-2"
   }
 }
