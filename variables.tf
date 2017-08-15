@@ -3,13 +3,13 @@ variable "aws_secret_key" {}
 
 variable "aws_region" {
     description = "EC2 Region for the VPC"
-    default = "us-west-2"
+    default = "us-east-1"
 }
 
 variable "amis" {
     description = "AMIs by region"
     default = {
-        us-east-2 = "ami-a7aa8ac2" # ubuntu 16.04 LTS
+        us-east-1 = "ami-a7aa8ac2" # ubuntu 16.04 LTS
     }
 }
 
