@@ -8,7 +8,7 @@ provider "aws" {
 
 #First VPC
 	resource "aws_vpc" "primary" {
-	cidr_block       = ["${var.primary_vpc_cidr}"]
+	cidr_block       = "${var.primary_vpc_cidr}"
 	instance_tenancy = "dedicated"
 
   tags {
@@ -125,9 +125,8 @@ resource "aws_instance" "nat" {
     ami = "ami-bb0f74ac" # this is a special ami preconfigured to do NAT
     availability_zone = "us-east-1a"
     instance_type = "m1.small"
-    key_name = "${var.aws_key_name}"
     vpc_security_group_ids = ["${aws_security_group.nat.id}"]
-    subnet_id = "${aws_subnet.us-east-1a-public.id}"
+    subnet_id = "${var.primary_public_subnet_cidr }"
     associate_public_ip_address = true
     source_dest_check = false
 

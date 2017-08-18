@@ -6,7 +6,6 @@ Essentially trying to build two virtual private clouds and have two way communic
 Would have liked to have located the VPC in separate cloud locations, but I wasn't able to find how to accomplish that as of yet.
 
 --ToDo: 
-0. Fix S3 bucket ?
 1. security rules
 2. configure infrastructure inside each cloud
 5. (Three, sir!) Find how to geo-locate to separate cloud
