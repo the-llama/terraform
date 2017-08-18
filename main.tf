@@ -102,11 +102,11 @@ resource "aws_security_group" "nat" {
 }
 
 resource "aws_instance" "nat" {
-    ami = "ami-bb0f74ac" # this is a special ami preconfigured to do NAT
+    ami = "ami-8d7751e8" # this is a special ami preconfigured to do NAT
     availability_zone = "us-east-1a"
     instance_type = "m1.small"
     vpc_security_group_ids = ["${aws_security_group.nat.id}"]
-    subnet_id = "${var.primary_public_subnet_cidr}"
+    #subnet_id = "${var.primary_public_subnet_cidr}"
     associate_public_ip_address = "true"
     source_dest_check = "false"
 
@@ -116,10 +116,9 @@ resource "aws_instance" "nat" {
 }
 resource "aws_instance" "web" {
 	ami = "ami-fde96b9d" #Debian 8
-	availability_zone = "us-west-2"
 	instance_type = "t2.medium"
 	vpc_security_group_ids = ["${aws_security_group.nat.id}"]
-	subnet_id = "${var.primary_public_subnet_cidr}"
+	#subnet_id = "${var.primary_public_subnet_cidr}"
 	associate_public_ip_address = "false"
 	source_dest_check = "false"
 	
