@@ -14,6 +14,7 @@ provider "aws" {
   tags {
     Name = "primary"
   }
+  default_security_group_id = "0011"
 }
 
 #Secondary VPC
@@ -24,6 +25,7 @@ provider "aws" {
   tags {
     Name = "secondary"
   }
+  default_security_group_id = "0011"
 }
 
 resource "aws_internet_gateway" "primary-nat-gateway" {
@@ -67,6 +69,7 @@ resource "aws_security_group" "nat" {
 resource "aws_security_group" "http_rules" {
 	name = "http_rules"
 	description = "Allow inbound HTTP traffic"
+	id = "0011"
 	ingress {
 		from_port = 80
 		to_port = 80
@@ -82,8 +85,6 @@ resource "aws_security_group" "http_rules" {
 		cidr_blocks = ["${var.primary_private_subnet_cidr}"]
 		cidr_blocks = ["${var.secondary_private_subnet_cidr}"]
 		}
-	vpc_id = "${aws_vpc.primary.id}"
-	vpc_id = "${aws_vpc.secondary.id}"
 }
 	
   #VPC networking
