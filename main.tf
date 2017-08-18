@@ -10,22 +10,22 @@ provider "aws" {
 	resource "aws_vpc" "primary" {
 	cidr_block       = "${var.primary_vpc_cidr}"
 	instance_tenancy = "dedicated"
+	enable_dns_support = "true"
 
   tags {
     Name = "primary"
   }
-  default_security_group_id = "0011"
 }
 
 #Secondary VPC
 	resource "aws_vpc" "secondary" {
 	cidr_block       = "${var.secondary_vpc_cidr}"
 	instance_tenancy = "dedicated"
+	enable_dns_support = "true"
   
   tags {
     Name = "secondary"
   }
-  default_security_group_id = "0011"
 }
 
 resource "aws_internet_gateway" "primary-nat-gateway" {
@@ -64,27 +64,6 @@ resource "aws_security_group" "nat" {
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
 	}
-}
-
-resource "aws_security_group" "http_rules" {
-	name = "http_rules"
-	description = "Allow inbound HTTP traffic"
-	id = "0011"
-	ingress {
-		from_port = 80
-		to_port = 80
-		protocol = "tcp"
-		cidr_blocks = ["${var.primary_private_subnet_cidr}"]
-		cidr_blocks = ["${var.secondary_private_subnet_cidr}"]
-		}
-
-	ingress {
-		from_port = 443
-		to_port = 443 
-		protocol = "tcp"
-		cidr_blocks = ["${var.primary_private_subnet_cidr}"]
-		cidr_blocks = ["${var.secondary_private_subnet_cidr}"]
-		}
 }
 	
   #VPC networking
@@ -127,11 +106,25 @@ resource "aws_instance" "nat" {
     availability_zone = "us-east-1a"
     instance_type = "m1.small"
     vpc_security_group_ids = ["${aws_security_group.nat.id}"]
-    subnet_id = "${var.primary_public_subnet_cidr }"
-    associate_public_ip_address = true
-    source_dest_check = false
+    subnet_id = "${var.primary_public_subnet_cidr}"
+    associate_public_ip_address = "true"
+    source_dest_check = "false"
 
 	tags {
-	name = "VPC NAT"
+	name = "VPC_NAT"
 	}
+}
+resource "aws_instance" "web" {
+	ami = "ami-fde96b9d" #Debian 8
+	availability_zone = "us-west-2"
+	instance_type = "t2.medium"
+	vpc_security_group_ids = ["${aws_security_group.nat.id}"]
+	subnet_id = "${var.primary_public_subnet_cidr}"
+	associate_public_ip_address = "false"
+	source_dest_check = "false"
+	
+	tags {
+	name = "web"
+	}
+	
 }
