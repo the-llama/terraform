@@ -94,8 +94,8 @@ resource "aws_security_group" "nat" {
   # ID of VPC 2 main route table.
   route_table_id = "${aws_vpc.secondary.main_route_table_id}"
 
-  # CIDR block / IP range for VPC 2.
-  destination_cidr_block = "${aws_vpc.secondary.cidr_block}"
+  # CIDR block / IP range for VPC 1.
+  destination_cidr_block = "${aws_vpc.primary.cidr_block}"
 
   # ID of VPC peering connection.
   vpc_peering_connection_id = "${aws_vpc_peering_connection.primary2secondary.id}"
